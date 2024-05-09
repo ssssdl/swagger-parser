@@ -1,0 +1,13 @@
+Uuid: 858b991209be484d87e0e63c63a24c14
+ExtensionType: 2
+Name: Swagger Parser
+RepoName: swagger-parser
+ScreenVersion: 1.0
+SerialVersion: 1
+MinPlatformVersion: 0
+ProOnly: True
+Author: Enes Bulut, Trendyol
+ShortDescription: Parse Swagger documents - view in a table and send to other tools.
+EntryPoint: swagger_parser.py
+BuildCommand: 
+SupportedProducts: Pro
