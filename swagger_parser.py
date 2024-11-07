@@ -13,7 +13,7 @@ import javax.swing.KeyStroke as KeyStroke
 import java.awt.event.KeyEvent as KeyEvent
 import javax.swing.AbstractAction as AbstractAction
 import java.awt.event.ComponentAdapter as ComponentAdapter
-
+from urlparse import urlparse
 import threading
 import json
 import re
@@ -580,33 +580,44 @@ class SwaggerParserTab(ITab):
 
         return "".join(char_arr)
 
+    def get_port_from_url(url):
+        parsed_url = urlparse(url)
+        if parsed_url.port:
+            return parsed_url.port
+        else:
+            if parsed_url.scheme == "http":
+                return 80
+            elif parsed_url.scheme == "https":
+                return 443
+            else:
+                return None
+
     def sendHttpRequest(self, url):
         global parsable_docs
 
         url = str(url)
 
         protocol = "https"
-        port = 443
+        port = self.get_port_from_url(url)
 
         if not url.startswith(protocol):
             protocol = "http"
-            port = 80
+            port = self.get_port_from_url(url)
 
         hostname = url.replace(protocol + "://", "").split("/")[0]
 
         if ":" in hostname:
             temp_hostname_split = hostname.split(":")
             hostname = temp_hostname_split[0]
-            port = int(temp_hostname_split[1])
 
 
-        if port in [80, 443]:
-            temp_url_1 = url.replace("://" + hostname + "/", "://" + hostname + ":" + str(port) + "/")
-            temp_url_2 = url.replace("://" + hostname + ":" + str(port) + "/", "://" + hostname + "/")
+        
+        temp_url_1 = url.replace("://" + hostname + "/", "://" + hostname + ":" + str(port) + "/")
+        temp_url_2 = url.replace("://" + hostname + ":" + str(port) + "/", "://" + hostname + "/")
 
-            if temp_url_1 != temp_url_2 and temp_url_1 in list(parsable_docs.keys()) and temp_url_2 in list(parsable_docs.keys()):
-                    del parsable_docs[temp_url_1]
-                    url = temp_url_2
+        if temp_url_1 != temp_url_2 and temp_url_1 in list(parsable_docs.keys()) and temp_url_2 in list(parsable_docs.keys()):
+                del parsable_docs[temp_url_1]
+                url = temp_url_2
 
 
 
